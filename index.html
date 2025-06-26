@@ -74,6 +74,13 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: var(--spotify-light-gray);
         }
+
+        /* Styles for disabled offers */
+        .offer-disabled {
+            opacity: 0.5;
+            pointer-events: none; /* Makes the element unclickable */
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 bg-black">
@@ -166,11 +173,11 @@
         let completedOffers = 0;
 
         // --- Config ---
-        const OFFERS_TO_COMPLETE = 2;
+        const OFFERS_TO_COMPLETE = 3; // We now have 3 tasks
         const OFFERS = [
-            { name: 'Listen to a Podcast', description: 'Complete a 30s audio ad.', icon: 'M12 7v3m0 3v3m0-6h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z', url: '#' },
-            { name: 'Discover Weekly', description: 'Save one song from the playlist.', icon: 'M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-12c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z', url: '#' },
-            { name: 'Complete Short Survey', description: 'Answer a few quick questions.', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', url: '#' },
+            { name: 'Complete Task 1', description: 'Click to open the first task.', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', url: 'https://smrturl.co/c5e4c7d' },
+            { name: 'Complete Task 2', description: 'Click to open the second task.', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', url: 'https://smrturl.co/1fe057d' },
+            { name: 'Complete Task 3', description: 'Click to open the final task.', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', url: 'https://smrturl.co/1feb95e' },
         ];
         const FAKE_USERNAMES = ['xX_MusicLover_Xx', 'Lila2023', 'JohnP_1998', 'sara_beats', 'daveyJ', 'AcousticGirl', 'MC_Flow', 'rockstar88', 'QuietStorm', 'EDM_Head'];
         const FAKE_PLANS = ['3 Months', '6 Months', '12 Months'];
@@ -251,9 +258,17 @@
         function createOfferElements() {
             const offerWall = document.getElementById('offer-wall');
             offerWall.innerHTML = '';
-            OFFERS.forEach(offer => {
-                const button = document.createElement('button');
-                button.className = "offer bg-[var(--spotify-gray)]/50 border-2 border-transparent rounded-lg p-3 flex items-center gap-4 w-full text-left transition-all duration-300 hover:bg-[var(--spotify-gray)]";
+            OFFERS.forEach((offer, index) => {
+                const button = document.createElement('a');
+                button.href = offer.url;
+                button.target = "_blank";
+                button.className = "offer bg-[var(--spotify-gray)]/50 border-2 border-transparent rounded-lg p-3 flex items-center gap-4 w-full text-left transition-all duration-300 hover:bg-[var(--spotify-gray)] no-underline";
+                
+                // Disable all but the first offer
+                if (index > 0) {
+                    button.classList.add('offer-disabled');
+                }
+
                 button.innerHTML = `
                     <div class="w-10 h-10 bg-[var(--spotify-black)] rounded-md flex items-center justify-center shrink-0">
                         <svg class="w-5 h-5 text-[var(--spotify-light-gray)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${offer.icon}"></path></svg>
@@ -266,7 +281,14 @@
                         <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </div>
                 `;
-                button.onclick = () => handleOfferClick(button, offer.url);
+                button.onclick = (e) => {
+                    // Prevent default only if the offer is not disabled
+                    if (button.classList.contains('offer-disabled')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    handleOfferClick(e.currentTarget, index);
+                };
                 offerWall.appendChild(button);
             });
         }
@@ -274,14 +296,23 @@
         /**
          * Handles offer click event.
          */
-        function handleOfferClick(button, url) {
-            if (button.disabled) return;
-            button.disabled = true;
+        function handleOfferClick(button, index) {
+            // Prevent multiple completions
+            if (button.dataset.completed) return;
+            button.dataset.completed = "true";
+
+            // Mark as visually complete
             button.classList.remove('hover:bg-[var(--spotify-gray)]');
-            button.classList.add('bg-green-500/10', 'border-[var(--spotify-green)]', 'cursor-not-allowed');
+            button.classList.add('bg-green-500/10', 'border-[var(--spotify-green)]');
             button.querySelector('.offer-status').innerHTML = `<svg class="w-5 h-5 text-[var(--spotify-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-            window.open(url, '_blank');
+            
             updateProgress();
+
+            // Enable the next offer
+            const allOffers = document.querySelectorAll('#offer-wall .offer');
+            if (allOffers[index + 1]) {
+                allOffers[index + 1].classList.remove('offer-disabled');
+            }
         }
 
         /**
